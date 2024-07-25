@@ -53,3 +53,16 @@ COPY --from=build /artifact /
 def test_extract_image(file, expected):
     with patch("builtins.open", mock_open(read_data=file)):
         assert utils.extract_image(file) == expected
+
+
+@pytest.mark.parametrize(
+    "content,hash",
+    [
+        ("", "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"),
+        ("hello\n", "5891b5b522d5df086d0ff0b110fbd9d21bb4fc7163af34d08286a2e846f6be03"),
+    ],
+)
+def test_hash_file(content, hash, tmp_path):
+    fn = tmp_path / "something"
+    fn.write_text(content, encoding="utf-8")
+    assert utils.hash_file(fn) == hash

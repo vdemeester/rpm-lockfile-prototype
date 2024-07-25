@@ -1,3 +1,4 @@
+import hashlib
 import logging
 import os
 import shlex
@@ -55,3 +56,11 @@ def get_file_from_git(repo, ref, file):
         # logged.
         subprocess.run(cmd, cwd=tmp_dir, check=True)
     return os.path.join(tmp_dir, file)
+
+
+def hash_file(path):
+    with open(path, "rb") as f:
+        h = hashlib.sha256()
+        while chunk := f.read(65536):
+            h.update(chunk)
+        return h.hexdigest()
